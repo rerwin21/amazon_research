@@ -1,4 +1,4 @@
-# load packages
+# load required packages
 amazon_packages <- function() {
  
   # dplyr for data frame manipulation
