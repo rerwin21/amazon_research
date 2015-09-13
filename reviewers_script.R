@@ -6,7 +6,7 @@ source("reviewers.R")
 amazon_packages()
 
 
-# time the process: takes around 8.4 minutes on my machine
+# time the process
 start <- Sys.time()
 
 
