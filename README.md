@@ -1,4 +1,4 @@
-# predict_amazon_rating
+# Amazon Research
 Repo for Amazon's Top Reviewer prediction project
 
 ## Overview
