@@ -1,4 +1,4 @@
-# get functions
+# set working directory and source functions
 setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/3_Code/R")
 source("reviewers.R")
 
