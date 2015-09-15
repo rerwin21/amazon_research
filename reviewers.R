@@ -22,10 +22,10 @@ amazon_packages <- function() {
 
 
 # grab html values: links, text, and attributes
-review_href <- function(page, pause = 1) {
+review_href <- function(page, pause = .1) {
   
   # grab html
-  html <- html(page)
+  html <- html(httr::GET(page, use_proxy("198.108.245.243", 8080)))
                                            
   
   # get the href value
