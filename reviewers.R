@@ -22,7 +22,7 @@ amazon_packages <- function() {
 
 
 # grab html values: links, text, and attributes
-review_href <- function(page, pause = .1) {
+review_href <- function(page, pause = 1) {
   
   # grab html
   html <- html(page)
