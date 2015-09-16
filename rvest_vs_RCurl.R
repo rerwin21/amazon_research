@@ -51,4 +51,7 @@ system.time(RCurl_fun <- lapply(pages, fun_RCurl, handle))
 
 # check that each works
 sapply(rvest_fun, `[[`, 2)
-sapply(RCurl_fun, `[`, 2:3) %>% t() # actually what I want
+sapply(RCurl_fun, `[`, 2:3) %>% # actually what I want
+  t() %>% 
+  as.data.frame.matrix() %>% 
+  setNames(c("Total_time", "Pretransfer_time"))
