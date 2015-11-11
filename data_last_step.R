@@ -91,7 +91,30 @@ review_text <- function(link) {
   # return text
   return(text)
 }
-  
+
+
+# create the links
+review_links <- create_links(reviewers$url_name,
+                             reviewers$page_num)
+
+
+# grab the html doc and parse the text
+text_reviews_1000 <- lapply(review_links$URLs[901:1000], review_text)
+
+
+# unlist the reviews
+text_reviews <- unlist(text_reviews_1000)
+
+
+# create data frame for storage
+text_reviews <- data.frame(reviews = text_reviews,
+                           stringsAsFactors = F,
+                           row.names = NULL)
+
+
+# write to disk
+write.csv(text_reviews, "review_1000.csv", row.names = F)
+
 
 # Review Rating
 
