@@ -11,9 +11,9 @@ The information to be analyzed must be scraped from Amazon.com's list of Top Rev
 As a first approximation, we'll apply the random forest algorithm (RF). I choose RF initially for out-of-box performance and relative ease of application. As the modeling progresses, the modelling approach will certainly evolve. The vast majority of programming will take place within the R language. 
 
 ### Storage and Computing
-The ideal solution would involve the procurment of all reviews from all Top Reviewers. If this is achieved, the data set will become very large with respect to R's in-memory paradigm. Moreover, the nature of the data could pose a challenge to required design of traditional RDBMS's. As a result, MongoDB on a cloud service, such as AWS might be a potential solution. 
+The ideal solution would involve the procurment of all reviews from all Top Reviewers. If this is achieved, the data set will become very large with respect to R's in-memory paradigm. Moreover, the nature of the data could pose a challenge to the required design of traditional RDBMS's. As a result, MongoDB on a cloud service, such as AWS might be a potential solution. 
 
-In addition, processing a data set of this size locally will strain computing resources. Thus, using a service like AWS EC2 could provide efficieny gains. Pricing will be a contraint as well as skill-set (configuring an AMI).
+In addition, processing a data set of this size locally will strain computing resources. Thus, using a service like AWS EC2 could provide efficieny gains.
 
 ### Final Product
 A score of each reviewer for a particular product that will represent the probability of a highly rated, helpful review. 
