@@ -123,25 +123,29 @@ text_reviews <- data.frame(reviews = text_reviews,
 write.csv(text_reviews, "review_4100.csv", row.names = F)
 
 
-# Review Date
-
-
-# Picture: Y/N
-
-
-# Video: Y/N
-
-
-# Product Hierarchy
-
-
-# Product name
-
-
-# Product Price
-
-
-# Product discount
-
-
 # Review Rating
+
+
+# review Date
+
+
+# picture: Y/N
+
+
+# video: Y/N
+
+
+# Gather the product information with these functions -----------------------
+# product ID div id="averageCustomerReviews" data-asin' is the key here
+
+
+# product hierarchy
+
+
+# product name
+
+
+# product price
+
+
+# product discount
