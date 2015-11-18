@@ -129,6 +129,12 @@ write.csv(text_reviews, "review_4100.csv", row.names = F)
 # review Date
 
 
+# review price
+
+
+# review product id
+
+
 # picture: Y/N
 
 
