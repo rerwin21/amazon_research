@@ -54,7 +54,8 @@ create_links <- function(users, pages) {
     unlist()
   
   # get the url names
-  url_name <- names(links)
+  url_name <- Map(rep, users, pages) %>% 
+    unlist()
   
   
   # create a data.frame
