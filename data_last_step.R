@@ -6,6 +6,7 @@ library(dplyr)
 library(rvest)
 library(httr)
 
+
 # setwd ---------------------------------------------------------------------
 setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
 
@@ -22,12 +23,12 @@ reviewers <- reviewers %>%
   )
 
 
-# grab the url for each person I'm assigned ---------------------------------
+# grab the url for each person I'm assigned
 reviewers <- reviewers %>% 
-  filter(scraper %in% c("Ryan", "Joe"),
-         page_num > 0)
+  filter(page_num > 0)
 
 
+# grab the links and last page of each reviewer -----------------------------
 # from the number above, decide the last page to peruse of reviews ...
 # ... either 10 or floor(num reviews/10)
 create_link <- function(user, page){
@@ -121,9 +122,6 @@ text_reviews <- data.frame(reviews = text_reviews,
 write.csv(text_reviews, "review_4100.csv", row.names = F)
 
 
-# Review Rating
-
-
 # Review Date
 
 
@@ -143,3 +141,6 @@ write.csv(text_reviews, "review_4100.csv", row.names = F)
 
 
 # Product discount
+
+
+# Review Rating
