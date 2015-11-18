@@ -23,7 +23,7 @@ pages <- bind_rows(pages)
   
 
 # finish timer
-end <- Sys.time() - start
+(end <- Sys.time() - start)
 
 
 

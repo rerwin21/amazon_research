@@ -72,11 +72,11 @@ review_links <- create_links(reviewers$url_name,
                              reviewers$page_num)
 
 
-# Review Text
+# Review Text ---------------------------------------------------------------
 review_text <- function(link) {
   
   # pause to mitigate rate limit
-  pause <- runif(1, 0, 3)
+  pause <- runif(1, 0, 2)
   
   
   # sleep
@@ -93,13 +93,18 @@ review_text <- function(link) {
     html_text()
   
   
+  # clean up the text if it contains javascript
+  
+  
+  
   # return text
   return(text)
 }
 
 
 # grab the html doc and parse the text
-text_reviews_1000 <- lapply(review_links$URLs[1401:1500], review_text)
+text_reviews_1000 <- lapply(review_links$URLs[4001:4100], 
+                            review_text)
 
 
 # unlist the reviews
@@ -113,7 +118,7 @@ text_reviews <- data.frame(reviews = text_reviews,
 
 
 # write to disk
-write.csv(text_reviews, "review_1500.csv", row.names = F)
+write.csv(text_reviews, "review_4100.csv", row.names = F)
 
 
 # Review Rating

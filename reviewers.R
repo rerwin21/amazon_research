@@ -25,7 +25,7 @@ amazon_packages <- function() {
 review_href <- function(page, pause = .1) {
   
   # grab html
-  html <- html(httr::GET(page, use_proxy("198.108.245.243", 8080)))
+  html <- html(page)    #httr::GET(page, use_proxy("198.108.245.243", 8080)))
                                            
   
   # get the href value
