@@ -78,7 +78,7 @@ review_links <- create_links(reviewers$url_name,
 review_text <- function(link) {
   
   # pause to mitigate rate limit
-  pause <- runif(1, 0, 2)
+  pause <- runif(1, 0, 1.5)
   
   
   # sleep
@@ -110,17 +110,19 @@ text_reviews_1000 <- lapply(review_links$URLs[4001:4100],
 
 
 # unlist the reviews
-text_reviews <- unlist(text_reviews_1000)
+text_reviews_1000 <- unlist(text_reviews_1000)
 
 
 # create data frame for storage
-text_reviews <- data.frame(reviews = text_reviews,
-                           stringsAsFactors = F,
-                           row.names = NULL)
+text_reviews_1000 <- data.frame(reviews = text_reviews_100,
+                                stringsAsFactors = F,
+                                row.names = NULL)
 
 
 # write to disk
-write.csv(text_reviews, "review_4100.csv", row.names = F)
+write.csv(text_reviews_1000, 
+          "review_4100.csv", 
+          row.names = F)
 
 
 # Review Rating
