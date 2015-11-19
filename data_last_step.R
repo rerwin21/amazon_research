@@ -107,7 +107,9 @@ review_links <- create_links(reviewers$url_name,
 .get_review_date <- function(html){
   
   # get the date of review
-  date
+  date <- html %>% 
+    html_nodes("nobr") %>% 
+    html_text()
   
   
   # return the review rating
@@ -116,6 +118,17 @@ review_links <- create_links(reviewers$url_name,
 
 
 # review price
+.get_review_price <- function(html){
+  
+  # grab the product price as listed in the review
+  price <- html %>% 
+    html_nodes(xpath = "//span[@class='price']/b") %>% 
+    html_text()
+  
+  
+  # return the product price
+  return(price)
+} 
 
 
 # review product id
