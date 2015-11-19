@@ -97,12 +97,22 @@ review_links <- create_links(reviewers$url_name,
     html_nodes(xpath = "//img[contains(@title, 'out of')]") %>% 
     html_attr("title")
   
-  # return rating
+  
+  # return the review rating
   return(rating)
 }
 
 
 # review Date
+.get_review_date <- function(html){
+  
+  # get the date of review
+  date
+  
+  
+  # return the review rating
+  return(date)
+}
 
 
 # review price
