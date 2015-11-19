@@ -95,10 +95,6 @@ review_text <- function(link) {
     html_text()
   
   
-  # clean up the text if it contains javascript
-  
-  
-  
   # return text
   return(text)
 }
