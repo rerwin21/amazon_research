@@ -74,7 +74,8 @@ review_links <- create_links(reviewers$url_name,
                              reviewers$page_num)
 
 
-# Review Text ---------------------------------------------------------------
+# Reviews -------------------------------------------------------------------
+# review text
 .get_review_text <- function(html) {
   
   # grab the text
@@ -88,8 +89,17 @@ review_links <- create_links(reviewers$url_name,
 }
 
 
-
-# Review Rating
+# review rating
+.get_review_rating <- function(html){
+  
+  # grab rating
+  rating <- html %>% 
+    html_nodes(xpath = "//img[contains(@title, 'out of')]") %>% 
+    html_attr("title")
+  
+  # return rating
+  return(rating)
+}
 
 
 # review Date
