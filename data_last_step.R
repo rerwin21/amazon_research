@@ -153,3 +153,9 @@ write.csv(text_reviews_1000,
 
 
 # product discount
+
+
+# primary function ----------------------------------------------------------
+get_page <- function(link , user){
+  
+}
