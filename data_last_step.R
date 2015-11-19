@@ -75,19 +75,7 @@ review_links <- create_links(reviewers$url_name,
 
 
 # Review Text ---------------------------------------------------------------
-review_text <- function(link) {
-  
-  # pause to mitigate rate limit
-  pause <- runif(1, 0, 1.5)
-  
-  
-  # sleep
-  Sys.sleep(pause)
-
-  
-  # read html
-  # html <- read_html(httr::GET(link, use_proxy("218.200.66.196", 8080)))
-  html <- read_html(link)
+.get_review_text <- function(html) {
   
   # grab the text
   text <- html %>% 
@@ -99,26 +87,6 @@ review_text <- function(link) {
   return(text)
 }
 
-
-# grab the html doc and parse the text
-text_reviews_1000 <- lapply(review_links$URLs[4001:4100], 
-                            review_text)
-
-
-# unlist the reviews
-text_reviews_1000 <- unlist(text_reviews_1000)
-
-
-# create data frame for storage
-text_reviews_1000 <- data.frame(reviews = text_reviews_100,
-                                stringsAsFactors = F,
-                                row.names = NULL)
-
-
-# write to disk
-write.csv(text_reviews_1000, 
-          "review_4100.csv", 
-          row.names = F)
 
 
 # Review Rating
