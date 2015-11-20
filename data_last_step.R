@@ -151,12 +151,35 @@ review_links <- create_links(reviewers$url_name,
 }
 
 
-# picture: Y/N
-# not worth the effort
+# review product name
+.get_review_pname <- function(html){
   
+  # get the product name as listed in on the review
+  p_name
+  
+  
+  # return the product name
+  return(p_name)
+}
 
-# video: Y/N
-# will use text to detect
+
+# get review id
+.get_review_id <- function(html){
+  
+  # define xpath
+  xpath <- "//td[@colspan='7' and @align='left' and @class='small']" %>% 
+    str_c("/a[1]")
+  
+  
+  # get the review id
+  review_id <- html %>% 
+    html_nodes(xpath = xpath) %>% 
+    html_attr("name")
+  
+  
+  # return the review id
+  return(review_id)
+}
 
 
 # Gather the product information with these functions -----------------------
