@@ -154,10 +154,17 @@ review_links <- create_links(reviewers$url_name,
 # review product name
 .get_review_pname <- function(html){
   
+  #  <div class="tiny" style="margin-bottom:0.5em;">
+  # define xpath
+  xpath <- "//div[@class='tiny' and @style='margin-bottom:0.5em;']/b//a"
+  
+  
   # get the product name as listed in on the review
-  p_name
+  p_name <- html %>% 
+    html_nodes(xpath = xpath) %>% 
+    html_text()
   
-  
+
   # return the product name
   return(p_name)
 }
