@@ -84,8 +84,22 @@ review_links <- create_links(reviewers$url_name,
     html_text()
   
   
+  # video javascript garbage?
+  JS <- str_detect(text, "amznJQ.onReady")
+  
+  
+  # split the javascipt contaminated reviews
+  js_text <- text[JS] %>% 
+    str_split("Length::") %>% 
+    sapply(`[[`, 2)
+  
+  
+  # piec text back together
+  clean_text <- ifelse(JS, js_text, text)
+    
+  
   # return text
-  return(text)
+  return(clean_text)
 }
 
 
