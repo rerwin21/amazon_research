@@ -90,6 +90,7 @@ review_links <- create_links(reviewers$url_name,
   
   # split the javascipt contaminated reviews
   js_text <- text[JS] %>% 
+    str_replace_all("\\n", "") %>% 
     str_split("Length::") %>% 
     sapply(`[[`, 2)
   
@@ -283,12 +284,16 @@ get_page <- function(link , user){
                        review_page = link,
                        stringsAsFactors = F
                        )
+      
+      # return the succesful data frame
+      return(df)
     },
     error = function(cond) {
       
       e_rror <- c(rep("fail", 8), user, link)
       
-      df <- data.frame(t(e_rror))
+      df <- data.frame(t(e_rror),
+                       stringsAsFactors = F)
       
       colnames(df) <- c("text", "rating", "price", 
                         "product_name","review_date", "product_id", 
@@ -302,7 +307,4 @@ get_page <- function(link , user){
       
     }
   )  
-  
-  # return the succesful data frame
-  return(df)
 }
