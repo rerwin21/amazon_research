@@ -227,8 +227,57 @@ get_page <- function(link , user){
   
   # parse get the html doc from the link provided
   try({
-    html_z <- read_html(links)
+    html <- read_html(link)
   }, 
   silent = T)
   
+  
+  # grab each component of interest
+  try({
+    text <- .get_review_text(html)
+    rating <- .get_review_rating(html)
+    price <- .get_review_price(html)
+    p_name <- .get_review_pname(html)
+    date <- .get_review_date(html)
+    p_id <- .get_review_pid(html)
+    id <- .get_review_id(html)
+    p_url <- .get_review_url(html)
+  },
+  silent = T)
+  
+  
+  # create the data frame we'll use later
+  tryCatch(
+    {
+      df <- data.frame(text = text,
+                       rating = rating,
+                       price = price,
+                       product_name = p_name,
+                       review_date = date,
+                       product_id = p_id,
+                       review_id = id,
+                       product_url = p_url,
+                       reviewer = user,
+                       review_page = link,
+                       stringsAsFactors = F
+                       )
+    },
+    error = function(cond) {
+      
+      e_rror <- "fail" %>% c(rep(., 8), user, link)
+      
+      df <- data.frame(t(e_rror))
+      
+      colnames(df) <- c("text", "rating", "price", 
+                        "product_name","review_date", "product_id", 
+                        "review_id", "product_url", "reviewer", 
+                        "review_page")
+      
+      return(df)
+    },
+    warning = function(cond) {
+      message(paste("URL caused a warning:", link))
+      
+    }
+  )    
 }
