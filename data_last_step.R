@@ -191,7 +191,18 @@ review_links <- create_links(reviewers$url_name,
 # review product link
 .get_review_url <- function(html){
   
+  # define xpath
+  xpath <- "//div[@class='tiny' and @style='margin-bottom:0.5em;']/b//a"
+  
+  
   # get product url associate with each review
+  product_url <- html %>% 
+    html_nodes(xpath = xpath) %>% 
+    html_attr("href")
+  
+  
+  # return product url
+  return(product_url)
 }
 
 
