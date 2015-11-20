@@ -154,7 +154,6 @@ review_links <- create_links(reviewers$url_name,
 # review product name
 .get_review_pname <- function(html){
   
-  #  <div class="tiny" style="margin-bottom:0.5em;">
   # define xpath
   xpath <- "//div[@class='tiny' and @style='margin-bottom:0.5em;']/b//a"
   
@@ -170,7 +169,7 @@ review_links <- create_links(reviewers$url_name,
 }
 
 
-# get review id
+# review id
 .get_review_id <- function(html){
   
   # define xpath
@@ -186,6 +185,13 @@ review_links <- create_links(reviewers$url_name,
   
   # return the review id
   return(review_id)
+}
+
+
+# review product link
+.get_review_url <- function(html){
+  
+  # get product url associate with each review
 }
 
 
