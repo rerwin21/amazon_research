@@ -152,9 +152,11 @@ review_links <- create_links(reviewers$url_name,
 
 
 # picture: Y/N
-
+# not worth the effort
+  
 
 # video: Y/N
+# will use text to detect
 
 
 # Gather the product information with these functions -----------------------
