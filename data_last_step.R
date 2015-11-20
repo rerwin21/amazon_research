@@ -132,6 +132,23 @@ review_links <- create_links(reviewers$url_name,
 
 
 # review product id
+.get_review_pid <- function(html){
+  
+  # defin the xpath: where is the information located ...
+  # ... in the htlm doc?
+  xpath <- "'padding-top: 10px; clear: both; width: 100%;'" %>% 
+    str_c("//div[@style=", ., "]/a[1]", sep = "")
+
+  
+  # get the product id as listed in the review
+  p_id <- html %>% 
+    html_nodes(xpath = xpath) %>% 
+    html_attr("href")
+  
+  
+  # return the product id
+  return(p_id)
+}
 
 
 # picture: Y/N
