@@ -222,8 +222,16 @@ review_links <- create_links(reviewers$url_name,
 # product discount
 
 
-# primary function ----------------------------------------------------------
+# primary function for review page ------------------------------------------
 get_page <- function(link , user){
+  
+  # rate throttle timer
+  pause <- runif(1, 0, 1.5)
+  
+  
+  # sleep system
+  Sys.sleep(pause)
+  
   
   # parse get the html doc from the link provided
   try({
