@@ -178,4 +178,10 @@ review_links <- create_links(reviewers$url_name,
 # primary function ----------------------------------------------------------
 get_page <- function(link , user){
   
+  # parse get the html doc from the link provided
+  try({
+    html_z <- read_html(links)
+  }, 
+  silent = T)
+  
 }
