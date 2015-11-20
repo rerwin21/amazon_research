@@ -264,7 +264,7 @@ get_page <- function(link , user){
     },
     error = function(cond) {
       
-      e_rror <- "fail" %>% c(rep(., 8), user, link)
+      e_rror <- c(rep("fail", 8), user, link)
       
       df <- data.frame(t(e_rror))
       
@@ -279,5 +279,8 @@ get_page <- function(link , user){
       message(paste("URL caused a warning:", link))
       
     }
-  )    
+  )  
+  
+  # return the succesful data frame
+  return(df)
 }
