@@ -1,6 +1,8 @@
 # where are my functions
 setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data/new_data")
 
+start <- Sys.time()
+
 indices <- seq(1, 20, by = 10)
 
 for(i in indices){
@@ -26,8 +28,7 @@ for(i in indices){
   write.csv(test2, file_name, row.names = F)
 }
   
-
-
+end <- Sys.time() - start
 
 
 
