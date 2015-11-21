@@ -1,4 +1,37 @@
-# where are my functions
+# where are my functions ----------------------------------------------------
+setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/3_Code/R")
+source("data_last_step.R")
+
+
+# load reviews list ---------------------------------------------------------
+setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
+
+
+# load the list of top reviewers --------------------------------------------
+reviewers <- read.csv("reviewers_list.csv", stringsAsFactors = F)
+
+
+# what page to scrape to for reviews
+reviewers <- reviewers %>% 
+  mutate(
+    page_num = ceiling(Reviews/10),
+    page_num = ifelse(page_num <= 10, page_num, 10)
+  )
+
+
+# grab the url for each person I'm assigned
+reviewers <- reviewers %>% 
+  filter(page_num > 0)
+
+
+# create the review links
+review_links <- create_links(reviewers$url_name,
+                             reviewers$page_num)
+
+
+
+
+# call and store the results ------------------------------------------------
 setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data/new_data")
 
 start <- Sys.time()
@@ -29,9 +62,3 @@ for(i in indices){
 }
   
 end <- Sys.time() - start
-
-
-
-
-
-

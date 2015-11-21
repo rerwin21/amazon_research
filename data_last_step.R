@@ -7,31 +7,10 @@ library(rvest)
 library(httr)
 
 
-# setwd ---------------------------------------------------------------------
-setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
-
-
-# load the list of top reviewers --------------------------------------------
-reviewers <- read.csv("reviewers_list.csv", stringsAsFactors = F)
-
-
-# what page to scrape to for reviews
-reviewers <- reviewers %>% 
-  mutate(
-    page_num = ceiling(Reviews/10),
-    page_num = ifelse(page_num <= 10, page_num, 10)
-  )
-
-
-# grab the url for each person I'm assigned
-reviewers <- reviewers %>% 
-  filter(page_num > 0)
-
-
 # grab the links and last page of each reviewer -----------------------------
 # from the number above, decide the last page to peruse of reviews ...
 # ... either 10 or floor(num reviews/10)
-create_link <- function(user, page){
+.create_link <- function(user, page){
   
   pages <- seq.int(page)
   base_url <- "http://www.amazon.com/gp/cdp/member-reviews/"
@@ -45,10 +24,10 @@ create_link <- function(user, page){
 
 
 # using the page number and link function above, perform for all users
-create_links <- function(users, pages) {
+.create_links <- function(users, pages) {
   
   # create list of pages to scrape for each person
-  links <- Map(function(x, y) create_link(x, y),
+  links <- Map(function(x, y) .create_link(x, y),
                x = users,
                y = pages) %>% 
     unlist()
@@ -67,11 +46,6 @@ create_links <- function(users, pages) {
   # return the data.frame
   return(links)
 }
-
-
-# create the review links
-review_links <- create_links(reviewers$url_name,
-                             reviewers$page_num)
 
 
 # Reviews -------------------------------------------------------------------
