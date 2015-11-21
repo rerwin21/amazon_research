@@ -25,7 +25,7 @@ reviewers <- reviewers %>%
 
 
 # create the review links
-review_links <- create_links(reviewers$url_name,
+review_links <- .create_links(reviewers$url_name,
                              reviewers$page_num)
 
 
