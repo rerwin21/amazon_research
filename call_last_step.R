@@ -29,8 +29,6 @@ review_links <- .create_links(reviewers$url_name,
                              reviewers$page_num)
 
 
-
-
 # call and store the results ------------------------------------------------
 setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data/new_data")
 
