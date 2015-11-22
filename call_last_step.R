@@ -57,6 +57,7 @@ for(i in indices){
   file_name <- str_c(i,".csv")
   
   write.csv(test2, file_name, row.names = F)
+  rm(test2)
 }
   
 end <- Sys.time() - start

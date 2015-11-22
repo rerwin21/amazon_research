@@ -224,7 +224,7 @@ get_page <- function(link , user){
   
   # parse get the html doc from the link provided
   try({
-    html <- read_html(link)
+    html <- read_html(GET(link), use_proxy("137.116.76.252", 3128))
   }, 
   silent = T)
   
@@ -243,6 +243,35 @@ get_page <- function(link , user){
   silent = T)
   
   
+  # create list of review components
+  review_components <- list(text = text,
+                            rating = rating,
+                            price = price,
+                            p_name = p_name,
+                            date = date,
+                            p_id = p_id,
+                            id = id,
+                            p_url = p_url)
+  
+  
+  # get length of each component
+  i_length <- sapply(review_components, length)
+  
+  
+  # how many reviews should I have
+  n_reviews <- i_length  %>% 
+    max()
+  
+  
+  # are they all the same length?
+  complete_reviews <- i_length %>% 
+    all(. == n_reviews)
+  
+  
+  # are we banned, indicated by empty components
+  banned <- length(i_length[i_length == 0]) > 1
+  
+  
   # create the data frame we'll use later
   tryCatch(
     {
@@ -256,24 +285,59 @@ get_page <- function(link , user){
                        product_url = p_url,
                        reviewer = user,
                        review_page = link,
+                       trouble = "correct",
                        stringsAsFactors = F
-                       )
+      )
+        
       
       # return the succesful data frame
       return(df)
     },
     error = function(cond) {
       
-      e_rror <- c(rep("fail", 8), user, link)
+      # why did we get the error
+      if(banned){
+        banned <- "banned"
+      } else {
+        banned <- "diff_length"
+      }
       
+      
+      # create the contents of failed data frame
+      e_rror <- c(i_length["text"],
+                  i_length["rating"],
+                  i_length["price"],
+                  i_length["p_name"],
+                  i_length["date"],
+                  i_length["p_id"],
+                  i_length["id"],
+                  i_length["p_url"],
+                  user, 
+                  link, 
+                  banned)
+      
+      
+      # convert contents to dataframe
       df <- data.frame(t(e_rror),
                        stringsAsFactors = F)
       
-      colnames(df) <- c("text", "rating", "price", 
-                        "product_name","review_date", "product_id", 
-                        "review_id", "product_url", "reviewer", 
-                        "review_page")
       
+      # rename to same names as succesful data frame
+      colnames(df) <- c("text", 
+                        "rating", 
+                        "price", 
+                        "product_name",
+                        "review_date", 
+                        "product_id", 
+                        "review_id", 
+                        "product_url", 
+                        "reviewer", 
+                        "review_page",
+                        "trouble")
+      
+      
+      # return unsuccessful data and appropriate error: ...
+      # ... either banned or lengths of the attempted components
       return(df)
     },
     warning = function(cond) {
