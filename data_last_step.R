@@ -80,15 +80,15 @@ library(httr)
 
 # review rating
 .get_review_rating <- function(html){
+
+  # create xpaths
+  xpath <- "//span[@style='margin-left: -5px;']/img"
+  
   
   # grab rating
   rating <- html %>% 
-    html_nodes(xpath = "//img[contains(@title, 'out of')]") %>% 
+    html_nodes(xpath = xpath) %>% 
     html_attr("title")
-  
-  
-  # remove duplicates
-  rating <- unique(rating)
   
   
   # return the review rating
@@ -108,20 +108,6 @@ library(httr)
   # return the review rating
   return(date)
 }
-
-
-# review price
-.get_review_price <- function(html){
-  
-  # grab the product price as listed in the review
-  price <- html %>% 
-    html_nodes(xpath = "//span[@class='price']/b") %>% 
-    html_text()
-  
-  
-  # return the product price
-  return(price)
-} 
 
 
 # review product id
@@ -144,24 +130,6 @@ library(httr)
 }
 
 
-# review product name
-.get_review_pname <- function(html){
-  
-  # define xpath
-  xpath <- "//div[@class='tiny' and @style='margin-bottom:0.5em;']/b//a"
-  
-  
-  # get the product name as listed in on the review
-  p_name <- html %>% 
-    html_nodes(xpath = xpath) %>% 
-    html_text()
-  
-
-  # return the product name
-  return(p_name)
-}
-
-
 # review id
 .get_review_id <- function(html){
   
@@ -178,24 +146,6 @@ library(httr)
   
   # return the review id
   return(review_id)
-}
-
-
-# review product link
-.get_review_url <- function(html){
-  
-  # define xpath
-  xpath <- "//div[@class='tiny' and @style='margin-bottom:0.5em;']/b//a"
-  
-  
-  # get product url associate with each review
-  product_url <- html %>% 
-    html_nodes(xpath = xpath) %>% 
-    html_attr("href")
-  
-  
-  # return product url
-  return(product_url)
 }
 
 
@@ -237,12 +187,9 @@ get_page <- function(link , user){
   try({
     text <- .get_review_text(html)
     rating <- .get_review_rating(html)
-    price <- .get_review_price(html)
-    p_name <- .get_review_pname(html)
     date <- .get_review_date(html)
     p_id <- .get_review_pid(html)
     id <- .get_review_id(html)
-    p_url <- .get_review_url(html)
   },
   silent = T)
   
@@ -250,12 +197,9 @@ get_page <- function(link , user){
   # create list of review components
   review_components <- list(text = text,
                             rating = rating,
-                            price = price,
-                            p_name = p_name,
                             date = date,
                             p_id = p_id,
-                            id = id,
-                            p_url = p_url)
+                            id = id)
   
   
   # get length of each component
@@ -281,12 +225,9 @@ get_page <- function(link , user){
     {
       df <- data.frame(text = text,
                        rating = rating,
-                       price = price,
-                       product_name = p_name,
                        review_date = date,
                        product_id = p_id,
                        review_id = id,
-                       product_url = p_url,
                        reviewer = user,
                        review_page = link,
                        trouble = "correct",
@@ -310,12 +251,9 @@ get_page <- function(link , user){
       # create the contents of failed data frame
       e_rror <- c(i_length["text"],
                   i_length["rating"],
-                  i_length["price"],
-                  i_length["p_name"],
                   i_length["date"],
                   i_length["p_id"],
                   i_length["id"],
-                  i_length["p_url"],
                   user, 
                   link, 
                   banned)
@@ -329,12 +267,9 @@ get_page <- function(link , user){
       # rename to same names as succesful data frame
       colnames(df) <- c("text", 
                         "rating", 
-                        "price", 
-                        "product_name",
                         "review_date", 
                         "product_id", 
                         "review_id", 
-                        "product_url", 
                         "reviewer", 
                         "review_page",
                         "trouble")
