@@ -87,6 +87,10 @@ library(httr)
     html_attr("title")
   
   
+  # remove duplicates
+  rating <- unique(rating)
+  
+  
   # return the review rating
   return(rating)
 }
