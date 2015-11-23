@@ -68,7 +68,6 @@ for(i in indices){
 end <- Sys.time() - start
 
 
-
 # load one master file and save ---------------------------------------------
 # list the files
 files <- dir(getwd(), pattern = "\\.csv")
@@ -94,3 +93,32 @@ setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
 write.csv(review_large_correct, 
           "total_reviews.csv", 
           row.names = F)
+
+
+# process total reviews -----------------------------------------------------
+# where to save the total list
+setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
+
+
+# read in total reviews
+total_reviews <- read.csv("total_reviews.csv",
+                          stringsAsFactors = F)
+
+
+# ratings
+total_reviews <- total_reviews %>% 
+  mutate(
+    rating = str_extract(rating, "\\d{1}\\.?\\d{1}"),
+    rating = as.numeric(rating)
+  )
+
+
+# product ID
+total_reviews <- total_reviews %>% 
+  mutate(
+    product_id = str_extract(product_id, 
+                             "(?<=ASIN\\=).*(?=\\#wasThisHelpful)")
+  )
+
+
+# date
