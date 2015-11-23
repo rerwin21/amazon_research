@@ -117,7 +117,8 @@ total_reviews <- total_reviews %>%
 total_reviews <- total_reviews %>% 
   mutate(
     product_id = str_extract(product_id, 
-                             "(?<=ASIN\\=).*(?=\\#wasThisHelpful)")
+                             "(?<=ASIN\\=).*(?=\\#wasThisHelpful)"),
+    product_id = str_c(product_id, "remove after loading")
   )
 
 
@@ -127,3 +128,4 @@ total_reviews <- total_reviews %>%
     review_date = guess_formats(review_date, "Bdy") %>% 
       as.Date(review_date, format = .)
   )
+
