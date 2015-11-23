@@ -122,3 +122,8 @@ total_reviews <- total_reviews %>%
 
 
 # date
+total_reviews <- total_reviews %>% 
+  mutate(
+    review_date = guess_formats(review_date, "Bdy") %>% 
+      as.Date(review_date, format = .)
+  )
