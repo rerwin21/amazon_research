@@ -179,7 +179,7 @@ library(httr)
 get_page <- function(link , user){
   
   # rate throttle timer
-  pause <- runif(1, 0, 1.5)
+  pause <- runif(1, 0, .75)
   
   
   # sleep system
@@ -193,29 +193,42 @@ get_page <- function(link , user){
   silent = T)
   
   
-  # grab each component of interest
-  tryCatch({
-    text <- .get_review_text(html)
-    rating <- .get_review_rating(html)
-    date <- .get_review_date(html)
-    p_id <- .get_review_pid(html)
-    id <- .get_review_id(html)
-  },
-  error = function(cond){
-    text <- character(0)
-    rating <- character(0)
-    date <- character(0)
-    p_id <- character(0)
-    id <- character(0)
-  })
-  
   
   # create list of review components
-  review_components <- list(text = text,
-                            rating = rating,
-                            date = date,
-                            p_id = p_id,
-                            id = id)
+  review_components <- tryCatch(
+    {
+      text <- .get_review_text(html)
+      rating <- .get_review_rating(html)
+      date <- .get_review_date(html)
+      p_id <- .get_review_pid(html)
+      id <- .get_review_id(html)
+      
+      comps <- list(text = text, 
+                    rating = rating, 
+                    date = date, 
+                    p_id = p_id,
+                    id = id)
+    }, 
+    error = function(cond){
+      
+      text <- character(0)
+      rating <- character(0)
+      date <- character(0)
+      p_id <- character(0)
+      id <- character(0)
+      
+      comps <- list(text = text, 
+                    rating = rating, 
+                    date = date, 
+                    p_id = p_id,
+                    id = id)
+      
+      return(comps)
+    },
+    warning = function(cond){
+      
+    }
+  )
   
   
   # get length of each component
@@ -234,6 +247,12 @@ get_page <- function(link , user){
   
   # are we banned, indicated by empty components
   banned <- length(i_length[i_length == 0]) > 1
+  
+  text <- review_components$text
+  rating <- review_components$rating
+  date <- review_components$date
+  p_id <- review_components$p_id
+  id <- review_components$id
   
   
   # create the data frame we'll use later
