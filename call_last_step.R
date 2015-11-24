@@ -128,4 +128,3 @@ total_reviews <- total_reviews %>%
     review_date = guess_formats(review_date, "Bdy") %>% 
       as.Date(review_date, format = .)
   )
-

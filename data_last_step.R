@@ -62,16 +62,26 @@ library(httr)
   JS <- str_detect(text, "amznJQ.onReady")
   
   
-  # split the javascipt contaminated reviews
-  js_text <- text[JS] %>% 
+  # have the Length:: element?
+  v_length <- str_detect(text, "Length::")
+  
+  
+  # js text with length
+  js_text <- text[JS & v_length] %>% 
     str_replace_all("\\n", "") %>% 
     str_split("Length::") %>% 
     sapply(`[[`, 2)
   
   
+  # js text with no length
+  text <- str_replace_all(text, 
+                          "\\n",
+                          "")
+  
+  
   # piec text back together
-  clean_text <- ifelse(JS, js_text, text)
-    
+  clean_text <- ifelse(JS & v_length, js_text, text)
+  
   
   # return text
   return(clean_text)
@@ -80,7 +90,7 @@ library(httr)
 
 # review rating
 .get_review_rating <- function(html){
-
+  
   # create xpaths
   xpath <- "//span[@style='margin-left: -5px;']/img"
   
@@ -117,7 +127,7 @@ library(httr)
   # ... in the htlm doc?
   xpath <- "'padding-top: 10px; clear: both; width: 100%;'" %>% 
     str_c("//div[@style=", ., "]/a[1]", sep = "")
-
+  
   
   # get the product id as listed in the review
   p_id <- html %>% 
@@ -178,20 +188,26 @@ get_page <- function(link , user){
   
   # parse get the html doc from the link provided
   try({
-    html <- read_html(GET(link), use_proxy("137.116.76.252", 3128))
+    html <- read_html(link)
   }, 
   silent = T)
   
   
   # grab each component of interest
-  try({
+  tryCatch({
     text <- .get_review_text(html)
     rating <- .get_review_rating(html)
     date <- .get_review_date(html)
     p_id <- .get_review_pid(html)
     id <- .get_review_id(html)
   },
-  silent = T)
+  error = function(cond){
+    text <- character(0)
+    rating <- character(0)
+    date <- character(0)
+    p_id <- character(0)
+    id <- character(0)
+  })
   
   
   # create list of review components
@@ -233,7 +249,7 @@ get_page <- function(link , user){
                        trouble = "correct",
                        stringsAsFactors = F
       )
-        
+      
       
       # return the succesful data frame
       return(df)
