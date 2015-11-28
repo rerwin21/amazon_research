@@ -70,9 +70,10 @@ end <- Sys.time() - start
 
 # load one master file and save ---------------------------------------------
 # list the files
+setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data/data_aws")
 files <- dir(getwd(), pattern = "\\.csv")
 
-
+start <- Sys.time()
 # read them in, return as data.frame
 review_large <- suppressWarnings(ldply(files, 
                                      read.csv, 
@@ -85,24 +86,24 @@ review_large_correct <- review_large %>%
   filter(trouble == "correct")
 
 
-# where to save the total list
-setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
+# look at review distribution
+cust_rev <- review_large_correct %>% 
+  group_by(reviewer) %>% 
+  summarise(
+    count = n()
+  )
 
 
-# write to disk
-write.csv(review_large_correct, 
-          "total_reviews.csv", 
-          row.names = F)
+# rename
+total_reviews <- review_large_correct
 
 
-# process total reviews -----------------------------------------------------
-# where to save the total list
-setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
-
-
-# read in total reviews
-total_reviews <- read.csv("total_reviews.csv",
-                          stringsAsFactors = F)
+# rm everything except total reviews, just in case, clear garbage ...
+# ... clear console, and get time
+rm(list = setdiff(ls(), c("total_reviews", "start")))
+gc()
+cat("\014")
+(end <- Sys.time() - start)
 
 
 # ratings
@@ -128,3 +129,17 @@ total_reviews <- total_reviews %>%
     review_date = guess_formats(review_date, "Bdy") %>% 
       as.Date(review_date, format = .)
   )
+
+
+# take a quick look at a sample
+total_reviews_sample <- total_reviews %>% 
+  sample_n(100)
+
+
+# take only the unique reviews
+total_reviews <- total_reviews %>% 
+  distinct(review_id)
+
+
+# unique products
+unique_products <- unique(total_reviews$product_id)
