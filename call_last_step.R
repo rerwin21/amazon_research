@@ -201,4 +201,24 @@ most_reviews <- total_reviews %>%
   ungroup() %>% 
   filter(review_count == max(review_count))
 
-  
+
+# get the total reviews for each reviewer
+reviews_per_reviewer <- total_reviews %>% 
+  group_by(reviewer) %>% 
+  summarise(
+    review_count = n()
+  )
+
+
+# join this with the number of reviews listed on the site
+reviews_per_reviewer <- left_join(reviews_per_reviewer,
+                                  reviewers[c("url_name", "Reviews")],
+                                  by = c("reviewer" = "url_name"))
+
+
+# create % scraped
+reviews_per_reviewer <- reviews_per_reviewer %>% 
+  mutate(
+    perc_retrieved = review_count / Reviews,
+    perc_retrieved = round(perc_retrieved, 2)
+  )
