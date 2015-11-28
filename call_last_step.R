@@ -131,15 +131,74 @@ total_reviews <- total_reviews %>%
   )
 
 
-# take a quick look at a sample
-total_reviews_sample <- total_reviews %>% 
-  sample_n(100)
-
-
 # take only the unique reviews
 total_reviews <- total_reviews %>% 
   distinct(review_id)
 
 
+# take a quick look at a sample
+total_reviews_sample <- total_reviews %>% 
+  sample_n(100)
+
+
 # unique products
 unique_products <- unique(total_reviews$product_id)
+
+
+# look at how many reviews over time of the top reviewers
+reviews_by_date <- total_reviews %>% 
+  group_by(review_date) %>% 
+  summarise(
+    review_count = n()
+  )
+
+
+# plot the results
+plot(review_count ~ review_date, reviews_by_date)
+
+
+# look at april 5, 2013
+april_5_13 <- total_reviews %>% 
+  filter(review_date == "2013-04-05")
+
+
+# what product was most reviewed on this date
+april_5_13_prod <- april_5_13 %>% 
+  group_by(product_id) %>% 
+  summarise(
+    review_count = n(),
+    reviewers = n_distinct(reviewer),
+    avg_rating = mean(rating, na.rm = T) %>% 
+      round(2)
+  )
+
+
+# load review list and see how many of the top reviewers were accounted for
+setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
+
+
+# read file
+reviewers <- read.csv("reviewers_list.csv", stringsAsFactors = F)
+
+
+# grab the url for each person I'm assigned
+reviewers <- reviewers %>% 
+  filter(Reviews > 0)
+
+
+# how many made the cut
+reviewers_retrieved <- intersect(reviewers$url_name, total_reviews$reviewer) %>% 
+  length()/nrow(reviewers)
+reviewers_retrieved <- round(reviewers_retrieved, 2)
+
+
+# who had the most reviews on any single day
+most_reviews <- total_reviews %>% 
+  group_by(reviewer, review_date) %>% 
+  summarise(
+    review_count = n()
+  ) %>% 
+  ungroup() %>% 
+  filter(review_count == max(review_count))
+
+  
