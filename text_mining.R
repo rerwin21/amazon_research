@@ -43,10 +43,19 @@ total_reviews$review_length <- total_reviews$text %>%
 (end <- Sys.time() - start)
 
 
-# get word count
+# get word count using parallel computing
+cl <- makeSOCKcluster(rep("localhost", 8))
 start <- Sys.time()
-total_reviews$review_words <- word_count(total_reviews$text)
+wc_par <- parSapply(cl, total_reviews$text, word_count)
 (end <- Sys.time() - start)
+
+
+# add word count to total reviews
+total_reviews$wc_review <- wc_par
+
+
+# remove cluster, clear garbage and console
+rm(cl, wc_par);gc();cat("\014")
 
 
 # plot review length
