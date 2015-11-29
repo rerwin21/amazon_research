@@ -10,7 +10,7 @@ library(parallel)
 library(qdap)
 
 
-# load the data -------------------------------------------------------------
+# load the data and review length: wc and char count ------------------------
 setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
 
 
@@ -97,9 +97,6 @@ gc();cat("\014")
 
 
 # apply the function to the review text -------------------------------------
-
-
-
 # stem and clean
 start <- Sys.time()
 rows <- sample(nrow(df), 2)
