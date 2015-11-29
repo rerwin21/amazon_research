@@ -5,6 +5,9 @@ library(lubridate)
 library(tm)
 library(SnowballC)
 library(stringr)
+library(snow)
+library(parallel)
+library(qdap)
 
 
 # load the data -------------------------------------------------------------
@@ -30,6 +33,27 @@ total_reviews <- read.csv("total_reviews_aws.csv",
 
 # change date
 total_reviews$review_date <- ymd(total_reviews$review_date)
+
+
+# get string length
+start <- Sys.time()
+total_reviews$review_length <- total_reviews$text %>% 
+  lapply(str_length) %>% 
+  unlist()
+(end <- Sys.time() - start)
+
+
+# get word count
+start <- Sys.time()
+total_reviews$review_words <- word_count(total_reviews$text)
+(end <- Sys.time() - start)
+
+
+# plot review length
+# histogram of reviews
+
+
+# avg review length over time
 
 
 # define function for stemming and cleaning ---------------------------------
@@ -64,7 +88,12 @@ gc();cat("\014")
 
 
 # apply the function to the review text -------------------------------------
+
+
+
+# stem and clean
 start <- Sys.time()
-text <- lapply(review_text, sen_tok) %>% 
+rows <- sample(nrow(df), 2)
+text <- laply(review_text[rows], sen_tok) %>% 
   unlist()
 (end <- Sys.time() - start)
