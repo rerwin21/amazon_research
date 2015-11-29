@@ -154,7 +154,14 @@ reviews_by_date <- total_reviews %>%
 
 
 # plot the results
-plot(review_count ~ review_date, reviews_by_date)
+plot(review_count ~ review_date, 
+     reviews_by_date,
+     pch = 20,
+     col = rgb(red = 0.2, 
+               green = 0.2, 
+               blue = 0.5, 
+               alpha = 0.5)
+     )
 
 
 # look at april 5, 2013
@@ -222,3 +229,67 @@ reviews_per_reviewer <- reviews_per_reviewer %>%
     perc_retrieved = review_count / Reviews,
     perc_retrieved = round(perc_retrieved, 2)
   )
+
+
+# histogram for reviews per review
+ggplot(reviews_per_reviewer, aes(x = review_count)) +
+  scale_x_log10() +
+  geom_histogram(alpha = .8, 
+                 binwidth = 0.015, 
+                 fill = "olivedrab3") +
+  geom_vline(data = reviews_per_reviewer, 
+             aes(xintercept = mean(review_count)), 
+             colour = "orange") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  labs(
+    x = "Review Count", 
+    y = "Total Reviewers"
+  ) +
+  theme(text = element_text(size = 24))
+
+
+# Clean text field ----------------------------------------------------------
+# does the text field contain javascript
+total_reviews <- total_reviews %>% 
+  mutate(
+    javascript = str_detect(text, "amznJQ.onReady")
+  )
+
+
+# take a quick look at a sample
+total_reviews_sample <- total_reviews %>% 
+  sample_n(100)
+
+
+# filter only the those that contain javascript
+total_reviews_javascript <- total_reviews %>% 
+  filter(javascript) %>% 
+  mutate(
+    text = str_replace_all(text, ".*(?=\\}\\}\\)\\;\\}\\)\\;)", "") %>% 
+      str_replace_all("(\\}\\}\\)\\;\\}\\)\\;)", "")
+  )
+
+
+# I want cleaned javascript text binded with rest of reviews
+total_reviews <- total_reviews %>% 
+  filter(!javascript) %>% 
+  bind_rows(total_reviews_javascript)
+
+
+# video, yes or no
+start <- Sys.time()
+total_reviews$vid <- sapply(total_reviews$text, 
+                            str_detect, 
+                            "\\d{1,2}:\\d{1,2}\\s?Mins")
+(end <- Sys.time() - start)
+
+
+# get classes to use when loading
+review_col_classes <- sapply(total_reviews, class)
+
+
+
