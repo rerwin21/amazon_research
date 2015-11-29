@@ -5,6 +5,7 @@ library(plyr)
 library(dplyr)
 library(rvest)
 library(httr)
+library(ggplot2)
 
 
 # grab the links and last page of each reviewer -----------------------------

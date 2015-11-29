@@ -209,6 +209,36 @@ most_reviews <- total_reviews %>%
   filter(review_count == max(review_count))
 
 
+# get the daily review statistics
+most_reviews_daily <- total_reviews %>% 
+  group_by(reviewer, review_date) %>% 
+  summarise(
+    review_count = n()
+  ) %>% 
+  ungroup()
+
+
+# plot the results of daily review stats
+ggplot(most_reviews_daily, aes(x = review_count)) +
+  scale_x_log10() +
+  geom_histogram(alpha = .8, 
+                 binwidth = 0.075, 
+                 fill = "slateblue") +
+  geom_vline(data = most_reviews_daily, 
+             aes(xintercept = mean(review_count)), 
+             colour = "orange") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  labs(
+    x = "Daily Review Count", 
+    y = "Total Reviewers"
+  ) +
+  theme(text = element_text(size = 18))
+
+
 # get the total reviews for each reviewer
 reviews_per_reviewer <- total_reviews %>% 
   group_by(reviewer) %>% 
