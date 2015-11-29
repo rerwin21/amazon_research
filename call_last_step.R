@@ -480,3 +480,9 @@ ggplot(reviews_per_reviewer, aes(x = review_count)) +
   ) +
   theme(text = element_text(size = 24))
 
+
+# get the unique products and save them to disk
+products_reviewed <- total_reviews %>% 
+  select(product_id) %>% 
+  distinct()
+
