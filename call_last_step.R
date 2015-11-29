@@ -239,6 +239,21 @@ ggplot(most_reviews_daily, aes(x = review_count)) +
   theme(text = element_text(size = 18))
 
 
+# time series of daily reviews
+ggplot(most_reviews_daily, aes(as.Date(review_date), review_count)) + 
+  geom_line(aes(group = reviewer), alpha = 0.5) + 
+  geom_smooth(aes(group = 1), 
+              size = 1.5) +
+  xlab("") + 
+  ylab("Daily Reviews") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  theme(text = element_text(size = 18))
+
+
 # get the total reviews for each reviewer
 reviews_per_reviewer <- total_reviews %>% 
   group_by(reviewer) %>% 
@@ -318,8 +333,150 @@ total_reviews$vid <- sapply(total_reviews$text,
 (end <- Sys.time() - start)
 
 
+# load again to do some plotting --------------------------------------------
+setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
+
+
+# load
+total_reviews <- read.csv("total_reviews_aws.csv", 
+                          stringsAsFactors = F,
+                          nrows = 10)
+
+
 # get classes to use when loading
 review_col_classes <- sapply(total_reviews, class)
 
 
+# reload
+start <- Sys.time()
+total_reviews <- read.csv("total_reviews_aws.csv", 
+                          stringsAsFactors = F,
+                          colClasses = review_col_classes)
+(end <- Sys.time() - start)
+
+# change date
+total_reviews$review_date <- ymd(total_reviews$review_date)
+
+
+# get the daily review statistics
+most_reviews_daily <- total_reviews %>% 
+  group_by(reviewer, review_date) %>% 
+  summarise(
+    review_count = n()
+  ) %>% 
+  ungroup()
+
+
+# plot the results of daily review stats
+ggplot(most_reviews_daily, aes(x = review_count)) +
+  scale_x_log10() +
+  geom_histogram(alpha = .8, 
+                 binwidth = 0.075, 
+                 fill = "slateblue") +
+  geom_vline(data = most_reviews_daily, 
+             aes(xintercept = mean(review_count)), 
+             colour = "orange") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  labs(
+    x = "Daily Review Count", 
+    y = "Total Reviewers"
+  ) +
+  theme(text = element_text(size = 18))
+
+
+# time series of daily reviews
+p <- ggplot(most_reviews_daily, aes(as.Date(review_date), review_count)) + 
+  geom_line(aes(group = reviewer), alpha = 0.1) + 
+  xlab("") + 
+  ylab("Daily Reviews") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  theme(text = element_text(size = 18))
+
+
+# plot time series
+p + stat_summary(fun.y = mean, geom = "line", colour = "red")
+
+
+# get the monthly review statistics
+most_reviews_month <- total_reviews %>% 
+  mutate(
+   year = year(review_date),
+   month = month(review_date)
+  ) %>% 
+  group_by(reviewer, year, month) %>% 
+  summarise(
+    review_count = n()
+  ) %>% 
+  ungroup() %>% 
+  mutate(
+    yr_mo = paste(year, month, sep = "-")
+  )
+
+
+# time series of monthly reviews
+p <- ggplot(most_reviews_month, aes(yr_mo, review_count)) + 
+  geom_line(aes(group = reviewer), alpha = 0.1) + 
+  xlab("") + 
+  ylab("Monthly Reviews") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  theme(text = element_text(size = 18))
+
+
+# plot time series
+p + stat_summary(fun.y = mean, geom = "line", colour = "red")
+
+
+# get the total reviews for each reviewer
+reviews_per_reviewer <- total_reviews %>% 
+  group_by(reviewer) %>% 
+  summarise(
+    review_count = n()
+  )
+
+
+# join this with the number of reviews listed on the site
+reviews_per_reviewer <- left_join(reviews_per_reviewer,
+                                  reviewers[c("url_name", "Reviews")],
+                                  by = c("reviewer" = "url_name"))
+
+
+# create % scraped
+reviews_per_reviewer <- reviews_per_reviewer %>% 
+  mutate(
+    perc_retrieved = review_count / Reviews,
+    perc_retrieved = round(perc_retrieved, 2)
+  )
+
+
+# histogram for reviews per review
+ggplot(reviews_per_reviewer, aes(x = review_count)) +
+  scale_x_log10() +
+  geom_histogram(alpha = .8, 
+                 binwidth = 0.015, 
+                 fill = "olivedrab3") +
+  geom_vline(data = reviews_per_reviewer, 
+             aes(xintercept = mean(review_count)), 
+             colour = "orange") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  labs(
+    x = "Review Count", 
+    y = "Total Reviewers"
+  ) +
+  theme(text = element_text(size = 24))
 
