@@ -485,4 +485,3 @@ ggplot(reviews_per_reviewer, aes(x = review_count)) +
 products_reviewed <- total_reviews %>% 
   select(product_id) %>% 
   distinct()
-
