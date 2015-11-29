@@ -98,8 +98,11 @@ gc();cat("\014")
 
 # apply the function to the review text -------------------------------------
 # stem and clean
+# get word count using parallel computing
+cl <- makeSOCKcluster(rep("localhost", 8))
 start <- Sys.time()
-rows <- sample(nrow(df), 2)
-text <- laply(review_text[rows], sen_tok) %>% 
+review_text <- parLapply(cl, review_text, sen_tok) %>% 
   unlist()
 (end <- Sys.time() - start)
+
+rm(cl);gc();cat("\014")
