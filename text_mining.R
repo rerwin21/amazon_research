@@ -184,13 +184,14 @@ wc_by_day <- total_reviews %>%
   summarise(
     avg_wc = mean(wc_review, na.rm = T),
     avg_wc = round(avg_wc, 2)
-  )
+  ) %>% 
+  ungroup()
 
 
 # timeseries
 ggplot(wc_by_day, aes(review_date, avg_wc)) + 
-  geom_line(size = 1.5, colour = "firebrick2") +
-  stat_smooth(colour = "slategrey") +
+  geom_line(size = 2, colour = "firebrick2") +
+  geom_line(size = 0.01, colour = "snow1", alpha = 0.7) +
   xlab("") + 
   ylab("Avg_wc") +
   theme(panel.grid.major = element_blank(), 
@@ -199,3 +200,21 @@ ggplot(wc_by_day, aes(review_date, avg_wc)) +
         axis.line = element_line(colour = "black"),
         legend.position = "none") +
   theme(text = element_text(size = 18))
+
+
+# review length and rating related? -----------------------------------------
+# inputs in model
+total_reviews <- total_reviews %>% 
+  mutate(
+    year = as.factor(year(review_date)),
+    vid = as.factor(vid)
+  )
+
+
+# build model
+rating_model <- lm(rating ~ wc_review + vid + year, 
+                   data = total_reviews)
+
+
+# get summary
+mod_summary <- summary(rating_model)
