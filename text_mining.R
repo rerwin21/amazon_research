@@ -13,7 +13,7 @@ library(qdap)
 # load the data and review length: wc and char count ------------------------
 setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
 
-
+start <- Sys.time()
 # load
 total_reviews <- read.csv("total_reviews_aws.csv", 
                           stringsAsFactors = F,
@@ -25,11 +25,10 @@ review_col_classes <- sapply(total_reviews, class)
 
 
 # reload
-start <- Sys.time()
 total_reviews <- read.csv("total_reviews_aws.csv", 
                           stringsAsFactors = F,
                           colClasses = review_col_classes)
-(end <- Sys.time() - start)
+
 
 # change date
 total_reviews$review_date <- ymd(total_reviews$review_date)
@@ -45,7 +44,6 @@ total_reviews$review_length <- total_reviews$text %>%
 
 # get word count using parallel computing
 cl <- makeSOCKcluster(rep("localhost", 8))
-start <- Sys.time()
 wc_par <- parSapply(cl, total_reviews$text, word_count)
 (end <- Sys.time() - start)
 
@@ -67,6 +65,16 @@ rm(cl, wc_par);gc();cat("\014")
 
 # define function for stemming and cleaning ---------------------------------
 sen_tok <- function(sen){
+  # load packages for parallel processing
+  library(plyr)
+  library(dplyr)
+  library(lubridate)
+  library(tm)
+  library(SnowballC)
+  library(stringr)
+  library(snow)
+  library(parallel)
+  library(qdap)
   
   tok <- sen %>% 
     str_to_lower() %>% 
@@ -81,6 +89,8 @@ sen_tok <- function(sen){
     removeWords(stopwords("en"))
   
   return(tok)
+  x_samp <- sample(100, 1)
+  if(x_samp < 11) invisible(gc())
 }
 
 
@@ -101,8 +111,8 @@ gc();cat("\014")
 # get word count using parallel computing
 cl <- makeSOCKcluster(rep("localhost", 8))
 start <- Sys.time()
-review_text <- parLapply(cl, review_text, sen_tok) %>% 
+review_text_test <- parLapply(cl, review_text, sen_tok) %>% 
   unlist()
-(end <- Sys.time() - start)
+(end1 <- Sys.time() - start)
 
-rm(cl);gc();cat("\014")
+rm(cl, review_text);gc()
