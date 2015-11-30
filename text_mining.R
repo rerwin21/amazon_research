@@ -8,6 +8,7 @@ library(stringr)
 library(snow)
 library(parallel)
 library(qdap)
+library(ggplot2)
 
 
 # load the data and review length: wc and char count ------------------------
@@ -54,13 +55,6 @@ total_reviews$wc_review <- wc_par
 
 # remove cluster, clear garbage and console
 rm(cl, wc_par);gc();cat("\014")
-
-
-# plot review length
-# histogram of reviews
-
-
-# avg review length over time
 
 
 # define function for stemming and cleaning ---------------------------------
@@ -127,6 +121,7 @@ total_reviews <- read.csv("total_reviews_aws.csv",
 col_classes <- sapply(total_reviews, class)
 col_classes[1] <- "NULL"
 
+
 # skip text field because I'm going to replace with it with the cleaned ...
 # ... stemmed text field
 total_reviews <- read.csv("total_reviews_aws.csv",
@@ -141,3 +136,66 @@ total_reviews$text <- review_text_test
 # rerrange for consistency
 total_reviews <- total_reviews %>% 
   select(text, rating:review_length)
+
+
+# plots of word count -------------------------------------------------------
+# reload
+setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
+total_reviews <- read.csv("total_reviews_stem.csv",
+                          stringsAsFactors = F,
+                          nrows = 10)
+
+
+# get the classes
+col_classes <- sapply(total_reviews, class)
+
+
+# use classes to load
+total_reviews <- read.csv("total_reviews_stem.csv",
+                          stringsAsFactors = F,
+                          colClasses = col_classes)
+
+
+# convert date
+total_reviews$review_date <- as.Date(ymd(total_reviews$review_date))
+
+
+# histogram
+ggplot(total_reviews, aes(x = wc_review)) +
+  scale_x_log10() +
+  geom_histogram(alpha = .9, 
+                 binwidth = 0.05, 
+                 fill = "tomato") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  labs(
+    x = "Word Count", 
+    y = "Total Reviews"
+  ) +
+  theme(text = element_text(size = 18))
+
+
+# get average word count by day
+wc_by_day <- total_reviews %>% 
+  group_by(review_date) %>% 
+  summarise(
+    avg_wc = mean(wc_review, na.rm = T),
+    avg_wc = round(avg_wc, 2)
+  )
+
+
+# timeseries
+ggplot(wc_by_day, aes(review_date, avg_wc)) + 
+  geom_line(size = 1.5, colour = "firebrick2") +
+  stat_smooth(colour = "slategrey") +
+  xlab("") + 
+  ylab("Avg_wc") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  theme(text = element_text(size = 18))
