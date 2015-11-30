@@ -202,7 +202,37 @@ ggplot(wc_by_day, aes(review_date, avg_wc)) +
   theme(text = element_text(size = 18))
 
 
+
+ggplot(wc_by_day, aes(review_date, avg_wc)) + 
+  geom_line(size = 2, colour = "firebrick2") +
+  geom_line(size = 0.01, colour = "snow1", alpha = 0.7) +
+  xlab("") + 
+  ylab("Avg_wc") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  theme(text = element_text(size = 18))
+
+
 # review length and rating related? -----------------------------------------
+# plot it
+ggplot(total_reviews, aes(wc_review, rating)) + 
+  geom_point(aes(colour = factor(rating)))+
+  ylab("Rating") + 
+  xlab("Review Word count") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  theme(text = element_text(size = 18))
+
+
+
+
+
 # inputs in model
 total_reviews <- total_reviews %>% 
   mutate(
