@@ -116,3 +116,28 @@ review_text_test <- parLapply(cl, review_text, sen_tok) %>%
 (end1 <- Sys.time() - start)
 
 rm(cl, review_text);gc()
+
+
+# reload all columns except for text ----------------------------------------
+total_reviews <- read.csv("total_reviews_aws.csv",
+                          stringsAsFactors = F,
+                          nrows = 10)
+
+# get the classes
+col_classes <- sapply(total_reviews, class)
+col_classes[1] <- "NULL"
+
+# skip text field because I'm going to replace with it with the cleaned ...
+# ... stemmed text field
+total_reviews <- read.csv("total_reviews_aws.csv",
+                          stringsAsFactors = F,
+                          colClasses = col_classes)
+
+
+# add the stemmed text and save to disk
+total_reviews$text <- review_text_test
+
+
+# rerrange for consistency
+total_reviews <- total_reviews %>% 
+  select(text, rating:review_length)
