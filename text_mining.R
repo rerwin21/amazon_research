@@ -202,18 +202,47 @@ ggplot(wc_by_day, aes(review_date, avg_wc)) +
   theme(text = element_text(size = 18))
 
 
+# get average rating by day
+rating_by_day <- total_reviews %>% 
+  group_by(review_date) %>% 
+  summarise(
+    avg_rating = mean(rating, na.rm = T),
+    avg_rating = round(avg_rating, 2)
+  ) %>% 
+  ungroup()
 
-ggplot(wc_by_day, aes(review_date, avg_wc)) + 
-  geom_line(size = 2, colour = "firebrick2") +
+
+# plot avg rating by day
+ggplot(rating_by_day, aes(review_date, avg_rating)) + 
+  geom_line(size = 2, colour = "olivedrab3") +
   geom_line(size = 0.01, colour = "snow1", alpha = 0.7) +
   xlab("") + 
-  ylab("Avg_wc") +
+  ylab("Avg_rating") +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(), 
         panel.background = element_blank(), 
         axis.line = element_line(colour = "black"),
         legend.position = "none") +
   theme(text = element_text(size = 18))
+
+
+# histogram of rating
+ggplot(total_reviews, aes(x = rating)) +
+  geom_histogram(alpha = .9, 
+                 binwidth = 0.05, 
+                 fill = "tomato") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        legend.position = "none") +
+  labs(
+    x = "Rating", 
+    y = "Total Reviews"
+  ) +
+  theme(text = element_text(size = 18))
+
+
 
 
 # review length and rating related? -----------------------------------------
@@ -242,7 +271,7 @@ total_reviews <- total_reviews %>%
 
 
 # build model
-rating_model <- lm(rating ~ wc_review + vid + year, 
+rating_model <- lm(wc_review ~ as.factor(rating), 
                    data = total_reviews)
 
 
