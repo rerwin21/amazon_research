@@ -229,8 +229,8 @@ ggplot(rating_by_day, aes(review_date, avg_rating)) +
 # histogram of rating
 ggplot(total_reviews, aes(x = rating)) +
   geom_histogram(alpha = .9, 
-                 binwidth = 0.05, 
-                 fill = "tomato") +
+                 binwidth = 0.5, 
+                 fill = "darkseagreen3") +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(), 
         panel.background = element_blank(), 
@@ -241,8 +241,6 @@ ggplot(total_reviews, aes(x = rating)) +
     y = "Total Reviews"
   ) +
   theme(text = element_text(size = 18))
-
-
 
 
 # review length and rating related? -----------------------------------------
