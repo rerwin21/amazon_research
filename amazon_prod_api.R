@@ -11,7 +11,7 @@ library(data.table)
 library(XML)
 
 
-
+# where is my data
 setwd("C:/Users/Ryan/Dropbox/RACHEL_RYAN/2_Data")
 
 products_reviewed <- read.csv("products_reviewed.csv",
