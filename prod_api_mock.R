@@ -69,9 +69,9 @@ load_products <- function(directory = getwd()) {
 test_prod <- "B00THKEKEQ"
 
 
-access_key <- "AKIAJHEL46A77AZQTR2A"
-secret_key <- "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"
-associate_tag <- "prodreview04c-20"
+access_key <- ""
+secret_key <- ""
+associate_tag <- ""
 time_stamp <- as.POSIXlt(Sys.time(), tz = "UTC") %>% 
   as.character() %>% 
   str_replace(" ", "T") %>% 
@@ -139,26 +139,3 @@ content_df <- xmlToDataFrame(content_parsed)
 content_list <- xmlToList(content_parsed)
 content_json <- toJSON(content_list, simplifyVector = F)
 json_pretty <- prettify(content_json)
-
-
-# unsigned string ---------------------------------------------------------------------
-# http://ecs.amazonaws.com/onca/xml?Service=AWSECommerceService
-# &Version=2011-08-01
-# &AssociateTag=prodreview04c-20
-# &Operation=ItemLookup
-# &ItemId=B00THKEKEQ
-# &IdType=ASIN
-# &ResponseGroup=ItemAttributes,SalesRank,RelatedItems
-# &RelationshipType=AuthorityTitle,NewerVersion
-
-# name value pairs --------------------------------------------------------------------
-# Service=AWSECommerceService
-# Version=2011-08-01
-# AssociateTag=prodreview04c-20
-# Operation=ItemLookup
-# ItemId=B00THKEKEQ
-# IdType=ASIN
-# ResponseGroup=ItemAttributes,SalesRank,RelatedItems
-# RelationshipType=AuthorityTitle,NewerVersion
-# Timestamp=2016-03-22T20:16:53.000Z
-# AWSAccessKeyId=AKIAJHEL46A77AZQTR2A
