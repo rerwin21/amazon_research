@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Mar 29 20:13:33 2016
-
 @author: rerwin21
 """
 
@@ -11,8 +9,11 @@ import amazonproduct
 
 
 # In[chg_wd]
+# what directory is the file in?
+data_path = "/home/rerwin21/amazon_proj/"
 
-
+# now us the os module to change the working directory
+os.chdir(data_path)
 
 # In[load_data]
 
