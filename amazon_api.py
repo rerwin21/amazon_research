@@ -24,3 +24,11 @@ products = pd.read_csv(file_name)
 
 
 # In[remove_string] 
+'''
+replace the "remove after loading" string ...
+the string below, rm_str is in place just to be extra cautious about ...
+leading zeros in the product id. So, to preserve the string format across ...
+platforms, I include a string to remove upon loading
+'''
+rm_str = "remove after loading"
+products['product_id'] = products['product_id'].replace(rm_str, "", regex=True)
