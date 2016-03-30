@@ -17,7 +17,7 @@ os.chdir(data_path)
 
 # In[load_data]
 # file name, located in the working directory
-file_name = "products.csv"
+file_name = "products_reviewed.csv"
 
 # use pandas to read in the data
 products = pd.read_csv(file_name)
