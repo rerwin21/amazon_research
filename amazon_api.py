@@ -42,5 +42,5 @@ api = amazonproduct.API(locale="us")
 
 # submit a request
 results = api.item_lookup("B012A8DUVK", ResponseGroup="ItemAttributes,SalesRank")
-print etree.tostring(results, pretty_print=True)
+print etree.tostring(results, pretty_print=True) # just a string 
 
