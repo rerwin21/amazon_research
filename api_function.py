@@ -10,6 +10,7 @@ import bottlenose, xmltodict
 import simplejson, os
 import numpy as np
 from time import sleep
+import time
 
 # In[how_many_files]
 def file_len(fname):
@@ -88,14 +89,16 @@ def aws_product_attrs_storage(prod_df, credentials, data_file, start_row=1, end_
                     simplejson.dump(data_api, outfile)
                 
                 if verbose:
-                    print "Product (%s) worked! %s have not worked" % (j, not_worked)
+                    just_time = time.strftime('%x %X %z')
+                    print "Product (%s) worked! %s have not worked: %s" % (j, not_worked, just_time)
                 
                 worked += 1
                 j += 1
             except:
                 not_worked += 1
                 if verbose:
-                    print "Product (%s) is trying again." % j
+                    just_time = time.strftime('%x %X %z')
+                    print "Product (%s) is trying again: %s" % (j, just_time)
                 
                 time_to_sleep = np.random.randint(30,46)
                 sleep(time_to_sleep)
