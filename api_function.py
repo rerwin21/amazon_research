@@ -23,10 +23,12 @@ def file_len(fname):
 # In[function]
 def get_product_attributes(product_id, credentials):
     """ The function takes a product id and dictionary of 
-    credentials which should be in the form of 
+    credentials which should be in the form of:
+    
       {'AWSAccessKeyId': your_key,
       'AWSSecretAccessKey': private_key,
       'AssociateTag': your_tag}
+      
     which are used for authentication. It returns a JSON string which will be
     saved and loaded to a DB later."""
     
@@ -73,43 +75,64 @@ def aws_product_attrs_storage(prod_df, credentials, data_file, start_row=1, end_
     
     worked = 0 # how many successful(ish)?
     not_worked = 0 # how many failed first?
-    j = start_row
-    max_loops = len(prod_df)
+    j = start_row # keep track of product row processed
+    max_loops = len(prod_df) # don't want an infinite loop
     for product in products:
         while j < max_loops:
             try:
-                sleep(1.15)
-                data_api = get_product_attributes(product, credentials)
-            
+                sleep(1.15) # throttling method
+                
+                # call api with product id and credentials
+                data_api = get_product_attributes(product, credentials) 
+                
+                # if the file already exists, open, and write a new line
                 if os.path.exists(data_file):
                     with open(data_file, 'aw') as outfile:
                         outfile.write('\n')
-
+                
+                # open file (or create if doesn't exist) and dump json string in it
                 with open(data_file, 'aw') as outfile:
                     simplejson.dump(data_api, outfile)
                 
+                # print results to console
                 if verbose:
                     just_time = time.strftime('%x %X %z')
                     print "Product (%s) worked! %s have not worked: %s" % (j, not_worked, just_time)
                 
-                worked += 1
-                j += 1
+                worked += 1# increment this as a successful run
+                j += 1 # increment products row counter
             except:
+                ''' 
+                If the "try" doesn't succeed, then run this block which,
+                keeps track of initial failures with "not_worked", prints to the console
+                if desired. 
+                
+                Critical part of this block is that it continues with the same 
+                Product ID in the "while" loop until it succeeds: that is, it 
+                runs the "try" block again until it succeeds.
+                
+                Once it succeeds, it will break from the "while" loop and move on
+                to the next product id
+                '''
                 not_worked += 1
                 if verbose:
                     just_time = time.strftime('%x %X %z')
                     print "Product (%s) is trying again: %s" % (j, just_time)
                 
-                time_to_sleep = np.random.randint(30,46)
-                sleep(time_to_sleep)
-                continue            
+                time_to_sleep = np.random.randint(30,46) # pause for a while after failure
+                sleep(time_to_sleep) # pause 30-45 secs
+                continue # 'try' again           
             break
     
     # number of products currently in data_file
     num_products_in_file = file_len(data_file)
     
+    # return the number of total products successfully queried, 
+    # number of failed attempts, and number of products in our data file
     dict_output = {"Processed": worked,
                    "Failed": not_worked,
                    "Num_in_File": num_products_in_file}
+                   
+                   
                    
     return dict_output
