@@ -36,18 +36,26 @@ def get_product_attributes(product_id, credentials):
     secret_key = credentials['AWSSecretAccessKey']
     assoc_tag = credentials['AssociateTag']
     
+    # setyp API object with credentials
     amazon = bottlenose.Amazon(AWSAccessKeyId=access_key, 
                            AWSSecretAccessKey=secret_key,
                            AssociateTag=assoc_tag,
                            MaxQPS=0.8)
-                          
+    
+    # request attributes and SalesRank for the product id                          
     response = amazon.ItemLookup(ItemId=product_id, 
                                  ResponseGroup="ItemAttributes,SalesRank")
-                                  
+    
+    # the response comes in as an XML string: to access it like a,
+    # typical Python object convert it to a dictionary (python object)                                  
     response_dict = dict(xmltodict.parse(response))
+    
+    # create a top-level identifier using the product id, then store the nested
+    # response
     response_dict = {'product_asin': product_id,
                        'api_response': response_dict}
     
+    # return the dictionary
     return response_dict
     
     
