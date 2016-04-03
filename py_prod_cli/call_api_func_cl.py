@@ -5,14 +5,13 @@ import api_function
 
 script, start_row, end_row, data_file = argv
 
+
 start_row = int(start_row)
 end_row = int(end_row)
 
-data_path = "/home/rerwin21/amazon_proj/"
 
 # file name, located in the working directory
 file_name = "products_reviewed.csv"
-file_name = data_path + file_name
 
 
 # use pandas to read in the data
