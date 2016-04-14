@@ -56,7 +56,7 @@ attributes_flat['prod_id'] = prod_item['ASIN']
 
 # print out key pairs
 for key, val in attributes_flat.iteritems():
-    print "KEY: %s \n\t VAL: %s" % (key, val)
+    print "KEY: %s\n\t  VAL: %s\n" % (key, val)
 
 # create dataframe
 df = pd.DataFrame(attributes_flat, index=[attributes_flat['prod_id']])
@@ -67,3 +67,38 @@ empty_dict = {} # for the function
 product_all_keyvals = extract(product, empty_dict)
 
 
+#%%
+
+
+with open(data_file) as myfile:
+    head = [next(myfile) for x in xrange(2)]
+   
+#%%   
+# use head as test file object   
+def product_attributes(prod_json):
+    product = json.loads(prod_json)
+    
+    # get the itam    
+    prod_item = product['api_response']['ItemLookupResponse']['Items']['Item']
+
+    # get flattened item attributes
+    attributes_flat = extract(prod_item['ItemAttributes'], {})
+
+    # add sales rank and product id to same dict
+    if 'SalesRank' in prod_item:
+        attributes_flat['salesrank'] = prod_item['SalesRank']
+        
+    attributes_flat['prod_id'] = prod_item['ASIN']
+
+    # create dataframe
+    df = pd.DataFrame(attributes_flat, index=[attributes_flat['prod_id']])
+    
+    return df
+    
+#%%
+
+prod_df = pd.DataFrame()
+
+for prod in head:
+    df = product_attributes(prod)
+    prod_df = prod_df.append(df)            
