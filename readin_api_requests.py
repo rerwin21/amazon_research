@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-This script defines a few s
+This script defines a few functions and then uses them to parse JSON strings
+into a dataframe, iterating through a file and appending row by row to the 
+dataframe.
 
 @author: rerwin21
 """
@@ -17,23 +19,29 @@ data_file = '/home/rerwin21/amazon_proj/api_data/api_request_3.txt'
 
 #%% dict function, taken and altered from StackOverflow to iinclude the 
 # test for list
-def extract(dict_in, dict_out):
+def extract(dict_in, dict_out, key2=''):
     for key, value in dict_in.iteritems():
         if isinstance(value, dict): # If value itself is dictionary
-            extract(value, dict_out)
+            if key2 != '':
+                key = '_'.join([key2, key])
+            extract(value, dict_out, key)
         elif isinstance(value, list):
             for i, j in enumerate(value):
-                if i == 0:
-                    keys = key
+                if isinstance(j, dict):
+                    extract(j, dict_out, key)    
                 else:
-                    keys = '_'.join([key, str(i + 1)])
-                dict_out[keys] = j
-            count_key = '_'.join([key, 'count'])
-            dict_out[count_key] = len(value)
+                    if i == 0:
+                        keys = key        
+                    else:
+                        keys = '_'.join([key, str(i + 1)])        
+                    dict_out[keys] = j
+                    count_key = '_'.join([key, 'count'])    
+                    dict_out[count_key] = len(value)
         else:
+            if key2 != '':
+                key = '_'.join([key2, key])
             dict_out[key] = value
     return dict_out
-
      
 #%%   
 # use head as test file object   
@@ -72,4 +80,4 @@ for prod in head:
     
 #%% write to disk
 # make sure to change the current directory
-prod_df.to_csv('api_request_100', index=False, encoding='utf-8')
+prod_df.to_csv('api_request_100_v2.csv', index=False, encoding='utf-8')
