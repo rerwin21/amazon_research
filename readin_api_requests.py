@@ -43,6 +43,7 @@ def extract(dict_in, dict_out, key2=''):
             dict_out[key] = value
     return dict_out
      
+     
 #%%   
 # use head as test file object   
 def product_attributes(prod_json):
@@ -68,15 +69,19 @@ def product_attributes(prod_json):
 #%%
 # get the first 100 products and put them in a list
 with open(data_file) as myfile:
-    head = [next(myfile) for x in xrange(101)]
+    head = [next(myfile) for x in xrange(100)]
     
+
+#%% input to dataframe3
+def prof_json_concat(head):
+    df_list = [product_attributes(prod_id) for prod_id in head]
+    df_total = pd.concat(df_list)
+    return df_total
+       
     
 #%% input to DataFrame
-prod_df = pd.DataFrame()
-for prod in head:
-    df = product_attributes(prod)
-    prod_df = prod_df.append(df)            
-    
+prod_df = prof_json_concat(head)
+
     
 #%% write to disk
 # make sure to change the current directory
