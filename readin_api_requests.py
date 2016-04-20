@@ -66,18 +66,18 @@ def product_attributes(prod_json):
     return df
     
     
-#%%
-# get the first 100 products and put them in a list
-with open(data_file) as myfile:
-    head = [next(myfile) for x in xrange(100)]
-    
-
 #%% input to dataframe3
 def prof_json_concat(head):
     df_list = [product_attributes(prod_id) for prod_id in head]
     df_total = pd.concat(df_list)
     return df_total
+
        
+#%%
+# get the first 100 products and put them in a list
+with open(data_file) as myfile:
+    head = [next(myfile) for x in xrange(1000)]
+    
     
 #%% input to DataFrame
 prod_df = prof_json_concat(head)
