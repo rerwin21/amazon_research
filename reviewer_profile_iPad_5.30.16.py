@@ -26,14 +26,6 @@ for url in urls:
     links.extend(lst)
     
      
-#%%
-for x in links:
-   if x is not None and x.startswith("/gp/pdp/profile/"):
-       print "www.amazon.com" + x
-   else:
-       pass    
-   
-   
 #%%   
 reviewer_links = ["www.amazon.com" + x
                   for x in links 
