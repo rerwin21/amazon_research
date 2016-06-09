@@ -8,11 +8,11 @@ import os
 import pandas as pd
 import numpy as np
 from lxml import etree
-from time import sleep
 import requests
 import StringIO
 from requests.packages.urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
+import re
 
 
 #%% change path to location of source data
@@ -34,9 +34,7 @@ review_page = review_links.ix[rand_page_index, 'reviews_link']
 
 #%% start a session
 session = requests.Session()
-retries = Retry(total=5,    
-                backoff_factor=0.1)
-
+retries = Retry(total=5, backoff_factor=0.1)
 session.mount('http://www.amazon.com', HTTPAdapter(max_retries=retries))
 
 
@@ -70,26 +68,28 @@ def scrape_review_page(link, session, parser):
     return review_page_info
     
     
-
 #%%
 test_lst = [scrape_review_page(link, session, htmlparser) 
             for link in review_links['reviews_link']]
 
 
-
-
-
-
-
-
+#%%
+df = pd.DataFrame(test_lst)
 
 
 #%%
-pages = review_links.ix[[100,200], 'reviews_link']
+def clean_text(string):
+    string = re.sub(u'\xa0', u' ', string)
+    string = string.strip()
+    return string
 
-test_lst = [scrape_review_page(link, session, htmlparser) 
-            for link in pages]
-                
-test_df = pd.DataFrame(test_lst)
 
-test_df.replace(u'\xa0', u' ', regex=True, inplace=True)
+#%%
+df = df.applymap(clean_text)
+
+
+#%% get review counts
+did_num = df[df['votes'] != "Didn't work"]
+did_num = did_num['num_reviews']
+did_num = did_num.replace("\s?:\s", "", regex=True)
+did_num = did_num.apply(lambda x: int(x))
