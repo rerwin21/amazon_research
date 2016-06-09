@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jun  7 13:29:31 2016
-
 @author: rerwin21
 """
 
@@ -13,6 +11,10 @@ from lxml import etree
 from time import sleep
 import requests
 import StringIO
+from requests.packages.urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
+
+
 #%% change path to location of source data
 os.chdir("/home/rerwin21/amazon_proj/")
 
@@ -32,19 +34,16 @@ review_page = review_links.ix[rand_page_index, 'reviews_link']
 
 #%% start a session
 session = requests.Session()
+retries = Retry(total=5,    
+                backoff_factor=0.1)
+
+session.mount('http://www.amazon.com', HTTPAdapter(max_retries=retries))
 
 
 #%% define request
 def page_request(link, session):
     page = session.get(link)
-    if not page.ok:
-        print "trying again"
-        wait = np.random.randint(1, 6)
-        sleep(wait)
-        page_request(link, session)
-    else:
-        #return (page.text, page.ok, page.status_code)
-        print page.ok
+    return (page.text, page.ok)
         
 
 #%% define a function
@@ -52,15 +51,21 @@ def scrape_review_page(link, session, parser):
     link = "http://" + link
     page, ok = page_request(link, session)
     tree = etree.parse(StringIO.StringIO(page), parser)
-    print link, ok
-    num_review = tree.xpath(".//div[@class='small']/b/following-sibling::text()[1]")[0]
-    rank = tree.xpath(".//div[@class='tiny' and @style='padding:3px 0 0 10px;']/text()[1]")[0]
-    votes = tree.xpath(".//div[@class='tiny' and @style='padding:3px 0 0 10px;']/text()[2]")[0]
+    print "%s: %s" % (link, ok)
+    
+    try:
+        num_review = tree.xpath(".//div[@class='small']/b/following-sibling::text()[1]")[0]
+        rank = tree.xpath(".//div[@class='tiny' and @style='padding:3px 0 0 10px;']/text()[1]")[0]
+        votes = tree.xpath(".//div[@class='tiny' and @style='padding:3px 0 0 10px;']/text()[2]")[0]
+    except:
+        error_message = ["Didn't work"] * 3
+        num_review, rank, votes = error_message 
+        
     reviewer = link.replace("http://www.amazon.com/gp/cdp/member-reviews/","")
-    review_page_info = {'reviewer': reviewer.strip(),
-                        'rank': rank.strip(),
-                        'votes': votes.strip(),
-                        'num_reviews': num_review.strip()}
+    review_page_info = {'reviewer': reviewer,
+                        'rank': rank,
+                        'votes': votes,
+                        'num_reviews': num_review}
                         
     return review_page_info
     
