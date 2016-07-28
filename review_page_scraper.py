@@ -238,12 +238,6 @@ def scrape_review_page(link, session, parser, enumerated=None):
 
 
 #%% accepts etree
-# generate the links to scrape, each link has at most 10 reviews
-
-
-
-
-#%% accepts etree
 # function to get review text
 
 
