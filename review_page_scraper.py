@@ -3,6 +3,7 @@
 @author: rerwin21
 """
 
+
 # -----------------------------------------------------------------------------
 #%% this section won't be in final version, just for testing
 import re, os # needed for part that WILL be in final script
@@ -231,6 +232,12 @@ def scrape_review_page(link, session, parser, enumerated=None):
 
 
 #%% accepts etree
+# function to get review ID
+
+
+
+
+#%% accepts etree
 # generate the links to scrape, each link has at most 10 reviews
 
 
@@ -261,12 +268,6 @@ def scrape_review_page(link, session, parser, enumerated=None):
 
 
 #%% accepts etree
-# function to get review ID
-
-
-
-
-#%% accepts etree
 # function to get reviewer ID
 
 
@@ -274,3 +275,6 @@ def scrape_review_page(link, session, parser, enumerated=None):
 
 #%% accepts etree
 # bring it all together where 
+
+
+
