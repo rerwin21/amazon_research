@@ -19,13 +19,13 @@ from requests.adapters import HTTPAdapter
 
 
 #%% change directory
-os.chdir("C:\\Users\\rerwin001\\Documents\\pipeline")
+#os.chdir("/home/rerwin21/amazon_proj/")
 
 
 #%% load data, clean numbers, change index, and save num_reviews
-df = pd.read_csv("reviewer_info_total.csv")
-df.index = df.reviewer
-df = df[df["num_reviews"] != "Hmm"]
+#df = pd.read_csv("reviewer_info_total.csv")
+#df.index = df.reviewer
+#df = df[df["num_reviews"] != "Hmm"]
 
 
 #%% clean text function
@@ -37,12 +37,12 @@ def clean_text(string):
     
 
 #%% clean the num_reviews using function above
-df.loc[:, "num_reviews"] = df.loc[:, "num_reviews"].apply(clean_text)
-df.loc[:, "num_pages"] = df.loc[:, "num_reviews"].apply(lambda x: math.ceil(x / 10.)) # 10 reviews per page
-
-
-#%% save num reviews as series (reviewer id is the index)
-revs = df.num_pages
+#df.loc[:, "num_reviews"] = df.loc[:, "num_reviews"].apply(clean_text)
+#df.loc[:, "num_pages"] = df.loc[:, "num_reviews"].apply(lambda x: math.ceil(x / 10.)) # 10 reviews per page
+#
+#
+##%% save num reviews as series (reviewer id is the index)
+#revs = df.num_pages
 
 
 #------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ def start_finish_tuple(url_list, num_aws_inst):
 
 
 #%% won't be in final version -------------------------------------------------
-url_list = compr_list(revs)
+#url_list = compr_list(revs)
 
 
 #%% start a session
@@ -173,35 +173,36 @@ def scrape_review_page(link, session, parser, enumerated=None):
         # raise status
         page.raise_for_status()
         
-        # call ids function(etree)
-        # call text function(etree, ids)
-        # call rating function(etree, ids) 
-        # call date function(etree, ids)
+        # get review components
+        ids = _get_review_id(tree)
+        text = _get_review_text(tree)
+        rating = _get_review_rating(tree) 
+        dates = _get_review_date(tree)
         # call price function(etree, ids) consider dropping doens't look consistent
         # call product_id function(etree, ids)
                 
     except requests.HTTPError as e: # seems to be most common error
        
         error_message = e.response.status_code
-        error_message = ["Error: %s" % error_message] * 6
+        error_message = ["Error: %s" % error_message] * 5
         review_id, text, rating, date, prod_id = error_message 
         
     except requests.ConnectionError as e: # just in case
         
         error_message = e.response.status_code
-        error_message = ["Error: %s" % error_message] * 6
+        error_message = ["Error: %s" % error_message] * 5
         review_id, text, rating, date, prod_id = error_message  
         
     except requests.URLRequired as e: # just in case
         
         error_message = e.response.status_code
-        error_message = ["Error: %s" % error_message] * 6
+        error_message = ["Error: %s" % error_message] * 5
         review_id, text, rating, date, prod_id = error_message 
         
     except requests.Timeout as e: # just in case
         
         error_message = e.response.status_code
-        error_message = ["Error: %s" % error_message] * 6
+        error_message = ["Error: %s" % error_message] * 5
         review_id, text, rating, date, prod_id = error_message 
         
     except requests.exceptions.RetryError as e:
@@ -214,15 +215,15 @@ def scrape_review_page(link, session, parser, enumerated=None):
         else:
             error_message = "Unknown error"
             
-        error_message = ["Error: %s" % error_message] * 6
+        error_message = ["Error: %s" % error_message] * 5
         review_id, text, rating, date, prod_id = error_message 
     
     
     # create dict which will be used to create a DataFrame later
-    review_page_info = {'review_id': '', 
-                        'text': '', 
-                        'rating': '', 
-                        'date': '',
+    review_page_info = {'review_id': ids, 
+                        'text': text, 
+                        'rating': rating, 
+                        'date': dates,
                         'prod_id': '',
                         'link': '', # might need to multiply how many based on num of review ids
                         } #
@@ -233,31 +234,93 @@ def scrape_review_page(link, session, parser, enumerated=None):
 
 #%% accepts etree
 # function to get review ID
-
-
+def _get_review_id(tree):
+    '''
+    The function takes an etree and will loop through the tree and find all (hopefully)
+    review ID's on the given page, which the etree was created from. Returns a list of 
+    review ID's.
+    
+    tree = etree.parse() object
+    '''
+    
+    # the review ids are the value of the name attributes for 'a' tags
+    ids = tree.xpath("//a[@name]/@name")
+    
+    if len(ids) == 0:
+        ids = ["Page Failed"]
+    
+    return ids
 
 
 #%% accepts etree
 # function to get review text
-
-
+def _get_review_text(tree):
+    '''
+    Grabs the most important part of the exercise, the review text.
+    
+    tree = etree.parse() object
+    '''
+    
+    # review text appears in the div tags, where the class attribute is 'reviewText'    
+    text = tree.xpath("//div[@class='reviewText']/text()")
+    
+    return text
 
 
 #%% accepts etree
 # function to get review rating
-
-
+def _get_review_rating(tree):
+    '''
+    Grabs the review rating, which is based on a scale of 1-5. 1 is the lowest
+    rating and 5 is the highest (best).
+    
+    tree = etree.parse() object
+    '''
+    
+    # get the rating, which located in the title of an image
+    rating = tree.xpath("//img[contains(@title, 'out of 5 stars')]/@title")
+    
+    if len(rating) != 0:
+        rating = [re.sub(" out of 5 stars", "", rate) for rate in rating] # remove the text, keep rating
+        rating = [float(rate) for rate in rating] # convert the ratings to float
+    
+    return rating
 
 
 #%% accepts etree
-# function to get price
-
-
+# function to get date
+def _get_review_date(tree):
+    '''
+    Grab the review date, which is located in the nobr tag
+    
+    tree = etree.parse() object
+    '''
+    
+    dates = tree.xpath("//nobr/text()")
+    
+    return dates
 
 
 #%% accepts etree
 # function to get product ID
-
+def _get_product_id(tree):
+    '''
+    Grabs the product id, asin, which we'll need to get the product attributes
+    via API calls. The asin id is bundled in a URL that we'll need to get first,
+    then use Regex patterns to get the id from the text
+    
+    tree = etree.parse() object
+    '''
+    
+    # build the 
+    style = 'padding-top: 10px; clear: both; width: 100%;'
+    xpath = "//div[@style='%s']" % style
+    xpath += "/a[1]/@href"
+    prod_id = tree.xpath(xpath)
+    
+    if len(prod_id) != 0:
+        pattern = re.compile("(?<=ASIN\=).*(?=\#wasThisHelpful)")
+        prod_id = [pattern.match(url) for url in prod_id]
 
 
 
