@@ -13,16 +13,8 @@ from time import sleep
 from requests.packages.urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 
-
-#%% clean text function
-def clean_text(string):
-    string = re.sub(":", "", string)
-    string = string.strip()
-    string = float(string)
-    return string
     
-    
-#%% create links for all pages
+#%%
 def compr_list(revs):
     '''
     ids = reviewer id's
