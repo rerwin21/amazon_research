@@ -120,6 +120,9 @@ def scrape_review_page(link, session, parser, enumerated=None):
     if not link.startswith("http://"):
         link = "http://" + link
     
+    # links, updated later if needed
+    links = [link]
+    
     # check for status other than 2xx, if successful grab elements I want
     # otherwise grab the error and use as in input into the returned dict
     try:
